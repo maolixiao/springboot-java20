@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+
+<script type="text/javascript">
+	
+	console.log("进入首页，正在开始注册websocket......");
+	var websocket = new WebSocket("ws://localhost:8080/mywebsocket");
+	//开启websocket
+	websocket.onopen = function(){
+		console.log("连接成功.....");
+	}
+	websocket.onclose = function(){
+		console.log("连接断开.....");
+	}
+	websocket.onerror = function(){
+		console.log("连接异常.....");
+	}
+	websocket.onmessage = function(msg){
+		console.log("接收到通信的消息."+msg.data);
+		
+		$("#msgBox").append("<p>"+msg.data+"</p>");
+	}
+	//var httpRequest = new XMLHttpRequest();
+	$(function(){
+		$("#msgBtn").click(function(){
+			var id = $("#sendMsgBox input[type=hidden]").val();
+			if(!id){
+				alert("请选择一个用户");
+				return;
+			}
+			var msg = $("[name=msgCtx]").val();
+			if(!msg)
+			{
+				alert("消息内容不能为空");
+				return;
+			}
+			
+			$.ajax({
+				url:"/sendMsg",
+				data:{
+					uid:id,
+					msg:msg
+				},
+				type:"post",
+				dataType:"text",
+				success:function(stu){
+					alert(stu);
+				}
+			});
+		});
+		$("tr:not(:first)").click(function(){
+			var id = $(this).find("td:eq(0)").html();
+			$("#sendMsgBox input[type=hidden]").val(id)
+			var name = $(this).find("td:eq(1)").html();
+			$("#msgName").html(name)
+		});
+	})
+</script>
+
+</head>
+<body>
+	到这个页面了》。。。。。
+	
+	<table border="1">
+		<tr>
+			<td>编号</td>
+			<td>姓名</td>
+			<td>生日</td>
+			<td>操作</td>
+		</tr>
+		<tr th:each="m:${stus.list}">
+			<td th:text="${m.id}"></td>
+			<td th:text="${m.name}"></td>
+			<td th:text="${m.birthday}"></td>
+			<td><a th:attr="sid=${m.id},xx=${m.name}" 
+				th:href="@{/delete?id=}+${m.id}">删除</a>
+			</td>
+		</tr>
+		
+	</table>
+	<div id="msgBox">
+		
+	</div>
+	<div id="sendMsgBox">
+		<p>接收人：<label id="msgName"></label><input type="hidden" name="msgId"></p>
+		<p>消息内容：
+		<textarea name="msgCtx" rows="5" cols="15"></textarea></p>
+		<button id="msgBtn">发送</button>
+	</div>	
+</body>
+</html>

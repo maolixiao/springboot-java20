@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.StudentMapper">
+
+	<cache></cache>
+  <resultMap id="BaseResultMap" type="com.accp.domain.Student">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  
+  <select id="query" useCache="true" flushCache="true" resultMap="BaseResultMap">
+  	select * from student
+  </select>
+  <select id="query1" useCache="false" resultMap="BaseResultMap">
+  	select * from student
+  </select>
+  
+  <select id="queryByName" resultMap="BaseResultMap">
+  	select * from student where name=#{name}
+  </select>
+</mapper>
